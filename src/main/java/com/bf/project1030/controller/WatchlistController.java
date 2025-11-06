@@ -16,21 +16,21 @@ public class WatchlistController {
 
   private final WatchlistService watchlistService;
 
-  /** 添加收藏：POST /api/watchlist/{productId} */
+  // add to watchlist：POST /watchlist/{productId}
   @PostMapping("/{productId}")
   public ResponseEntity<Void> add(Authentication authentication, @PathVariable Long productId) {
     watchlistService.add(authentication, productId);
     return ResponseEntity.ok().build();
   }
 
-  /** 取消收藏：DELETE /api/watchlist/{productId} */
+  // remove from watch list：DELETE /watchlist/{productId}
   @DeleteMapping("/{productId}")
   public ResponseEntity<Void> remove(Authentication authentication, @PathVariable Long productId) {
     watchlistService.remove(authentication, productId);
     return ResponseEntity.noContent().build();
   }
 
-  /** 列表：GET /api/watchlist */
+  // list：GET /api/watchlist
   @GetMapping
   public ResponseEntity<List<ProductUserDTO>> list(Authentication authentication) {
     return ResponseEntity.ok(watchlistService.list(authentication));
