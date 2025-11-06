@@ -17,21 +17,21 @@ public class WatchlistController {
   private final WatchlistService watchlistService;
 
   // add to watchlist：POST /watchlist/{productId}
-  @PostMapping("/{productId}")
+  @PostMapping("/product/{productId}")
   public ResponseEntity<Void> add(Authentication authentication, @PathVariable Long productId) {
     watchlistService.add(authentication, productId);
     return ResponseEntity.ok().build();
   }
 
   // remove from watch list：DELETE /watchlist/{productId}
-  @DeleteMapping("/{productId}")
+  @DeleteMapping("/product/{productId}")
   public ResponseEntity<Void> remove(Authentication authentication, @PathVariable Long productId) {
     watchlistService.remove(authentication, productId);
     return ResponseEntity.noContent().build();
   }
 
   // list：GET /api/watchlist
-  @GetMapping
+  @GetMapping("/products/all")
   public ResponseEntity<List<ProductUserDTO>> list(Authentication authentication) {
     return ResponseEntity.ok(watchlistService.list(authentication));
   }
