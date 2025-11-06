@@ -2,9 +2,11 @@ package com.bf.project1030.controller;
 
 import com.bf.project1030.DTO.ProductAdminDTO;
 import com.bf.project1030.DTO.ProductAdminUpsertReq;
+import com.bf.project1030.DTO.ProductStatDTO;
 import com.bf.project1030.DTO.ProductUserDTO;
 import com.bf.project1030.service.AdminProductService;
 import com.bf.project1030.service.ProductService;
+import com.bf.project1030.service.UserStatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class ProductController {
 
   private final ProductService productService;
   private final AdminProductService adminProductService;
+  private final UserStatService reportService;
 
   // ===== 同一路径：GET /products/all —— token区分返回 =====
   @GetMapping("/all")
@@ -82,5 +85,24 @@ public class ProductController {
     Collection<?> authorities = auth.getAuthorities();
     if (authorities == null) return false;
     return authorities.stream().anyMatch(a -> role.equals(a.toString()));
+  }
+
+  // find most frequent purchase
+  // GET /products/frequent/{n}
+  @GetMapping("/frequent/{n}")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  public ResponseEntity<List<ProductStatDTO>> topFrequent(Authentication authentication,
+      @PathVariable int n) {
+    String username = authentication.getName();
+    return ResponseEntity.ok(reportService.topFrequent(username, n));
+  }
+
+  // GET /products/recent/{n}
+  @GetMapping("/recent/{n}")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  public ResponseEntity<List<ProductStatDTO>> topRecent(Authentication authentication,
+      @PathVariable int n) {
+    String username = authentication.getName();
+    return ResponseEntity.ok(reportService.topRecent(username, n));
   }
 }
