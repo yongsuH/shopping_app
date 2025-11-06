@@ -1,7 +1,10 @@
 package com.bf.project1030.service;
 
 import com.bf.project1030.DTO.ProductUserDTO;
-import com.bf.project1030.domain.entity.*;
+import com.bf.project1030.entity.Product;
+import com.bf.project1030.entity.User;
+import com.bf.project1030.entity.Watchlist;
+import com.bf.project1030.entity.WatchlistKey;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.ProductUserDao;
 import com.bf.project1030.repository.UserDao;

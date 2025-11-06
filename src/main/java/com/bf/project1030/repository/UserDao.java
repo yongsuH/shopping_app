@@ -1,6 +1,6 @@
 package com.bf.project1030.repository;
 
-import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.entity.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;

@@ -1,7 +1,7 @@
 package com.bf.project1030.bootstrap;
 
-import com.bf.project1030.domain.entity.Role;
-import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.entity.Role;
+import com.bf.project1030.entity.User;
 import com.bf.project1030.repository.UserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

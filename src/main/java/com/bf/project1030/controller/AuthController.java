@@ -1,7 +1,6 @@
 package com.bf.project1030.controller;
 
-import com.bf.project1030.DTO.LoginRequest;
-import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.entity.User;
 import com.bf.project1030.exception.InvalidCredentialsException;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.UserDao;
@@ -10,9 +9,7 @@ import com.bf.project1030.service.AuthService;
 import com.bf.project1030.service.UserService;
 import jakarta.validation.Valid;
 import java.util.Map;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

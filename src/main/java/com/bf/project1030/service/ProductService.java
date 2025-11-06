@@ -3,7 +3,7 @@ package com.bf.project1030.service;
 
 import com.bf.project1030.repository.ProductUserDao;
 import com.bf.project1030.DTO.ProductUserDTO;
-import com.bf.project1030.domain.entity.Product;
+import com.bf.project1030.entity.Product;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

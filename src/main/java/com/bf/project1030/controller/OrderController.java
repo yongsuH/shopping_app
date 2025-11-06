@@ -1,13 +1,8 @@
 // src/main/java/com/example/shop/controller/OrderController.java
 package com.bf.project1030.controller;
 
-import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasRole;
-
 import com.bf.project1030.DTO.OrderDTO;
 import com.bf.project1030.DTO.OrderRequest;
-import com.bf.project1030.DTO.ProductAdminDTO;
-import com.bf.project1030.DTO.ProductUserDTO;
-import com.bf.project1030.domain.entity.Order;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.UserDao;
 import com.bf.project1030.service.OrderService;

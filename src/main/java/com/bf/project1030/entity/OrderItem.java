@@ -1,8 +1,6 @@
 // src/main/java/com/example/shop/entity/OrderItem.java
-package com.bf.project1030.domain.entity;
+package com.bf.project1030.entity;
 
-import com.bf.project1030.domain.entity.Order;
-import com.bf.project1030.domain.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;

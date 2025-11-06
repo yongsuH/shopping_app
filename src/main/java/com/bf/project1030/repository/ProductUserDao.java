@@ -1,7 +1,7 @@
 // src/main/java/com/example/shop/dao/ProductDao.java
 package com.bf.project1030.repository;
 
-import com.bf.project1030.domain.entity.Product;
+import com.bf.project1030.entity.Product;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.*;

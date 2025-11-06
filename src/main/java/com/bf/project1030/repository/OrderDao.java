@@ -1,6 +1,6 @@
 package com.bf.project1030.repository;
 
-import com.bf.project1030.domain.entity.Order;
+import com.bf.project1030.entity.Order;
 import jakarta.persistence.*;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;

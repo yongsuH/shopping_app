@@ -1,4 +1,4 @@
-package com.bf.project1030.domain.entity;
+package com.bf.project1030.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

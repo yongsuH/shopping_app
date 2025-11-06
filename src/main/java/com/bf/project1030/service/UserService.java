@@ -1,6 +1,6 @@
 package com.bf.project1030.service;
 
-import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.entity.User;
 import com.bf.project1030.exception.DuplicateResourceException;
 import com.bf.project1030.repository.UserDao;
 import jakarta.transaction.Transactional;

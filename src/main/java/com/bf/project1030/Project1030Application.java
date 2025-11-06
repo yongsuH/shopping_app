@@ -1,6 +1,6 @@
 package com.bf.project1030;
 
-import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.entity.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

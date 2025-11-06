@@ -2,7 +2,7 @@ package com.bf.project1030.repository;
 
 import com.bf.project1030.DTO.ProductProfitDTO;
 import com.bf.project1030.DTO.ProductStatDTO;
-import com.bf.project1030.domain.entity.OrderStatus;
+import com.bf.project1030.entity.OrderStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -82,7 +82,7 @@ public class ReportDao {
       order by sum(oi.quantity) desc, p.id asc
       """;
     return em.createQuery(jpql, ProductStatDTO.class)
-        .setParameter("completed", com.bf.project1030.domain.entity.OrderStatus.COMPLETED)
+        .setParameter("completed", OrderStatus.COMPLETED)
         .setMaxResults(topN)
         .getResultList();
   }
@@ -104,7 +104,7 @@ public class ReportDao {
       """;
 
     return em.createQuery(jpql, ProductProfitDTO.class)
-        .setParameter("completed", com.bf.project1030.domain.entity.OrderStatus.COMPLETED)
+        .setParameter("completed", OrderStatus.COMPLETED)
         .setMaxResults(topN)
         .getResultList();
   }

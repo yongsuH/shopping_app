@@ -3,10 +3,14 @@ package com.bf.project1030.service;
 
 import com.bf.project1030.DTO.OrderDTO;
 import com.bf.project1030.DTO.OrderItemDTO;
+import com.bf.project1030.entity.Order;
+import com.bf.project1030.entity.OrderItem;
+import com.bf.project1030.entity.OrderStatus;
+import com.bf.project1030.entity.Product;
+import com.bf.project1030.entity.User;
 import com.bf.project1030.exception.NotEnoughInventoryException;
 import com.bf.project1030.exception.InvalidOrderStatusTransitionException;
 import com.bf.project1030.repository.*;
-import com.bf.project1030.domain.entity.*;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

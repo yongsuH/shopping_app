@@ -1,8 +1,8 @@
 package com.bf.project1030.repository;
 
-import com.bf.project1030.domain.entity.Watchlist;
-import com.bf.project1030.domain.entity.WatchlistKey;
-import com.bf.project1030.domain.entity.Product;
+import com.bf.project1030.entity.Watchlist;
+import com.bf.project1030.entity.WatchlistKey;
+import com.bf.project1030.entity.Product;
 import jakarta.persistence.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

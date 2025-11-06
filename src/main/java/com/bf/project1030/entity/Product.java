@@ -1,5 +1,5 @@
 // src/main/java/com/example/shop/entity/Product.java
-package com.bf.project1030.domain.entity;
+package com.bf.project1030.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
