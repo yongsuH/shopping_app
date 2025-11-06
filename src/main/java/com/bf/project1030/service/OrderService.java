@@ -69,19 +69,19 @@ public class OrderService {
         .toList();
   }
 
-  // 管理员查任意订单
+  // admin can access all orders
   public OrderDTO getOrderByIdForAdmin(Long id) {
     Order order = orderDao.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     return toDTO(order);
   }
 
-  // 用户只能查自己的订单
+  // user can only access their own order
   public OrderDTO getOrderByIdForUser(String username, Long id) {
     Order order = orderDao.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
-    // 如果订单不属于当前用户，就拒绝
+    // Reject if not the user
     if (!order.getUser().getUsername().equals(username)) {
       throw new AccessDeniedException("You do not have permission to access this order");
     }
@@ -125,7 +125,7 @@ public class OrderService {
     }
     // already completed
     if (order.getStatus() == OrderStatus.COMPLETED) {
-      return toDTO(order);
+      throw new InvalidOrderStatusTransitionException("Order is already completed");
     }
     //if (order.getStatus() != OrderStatus.PROCESSING) {
     //  throw new InvalidOrderStatusTransitionException("Only PROCESSING order can be completed");
@@ -144,12 +144,12 @@ public class OrderService {
     }
 
     if (order.getStatus() == OrderStatus.COMPLETED) {
-      throw new InvalidOrderStatusTransitionException("Completed order cannot be completed");
+      throw new InvalidOrderStatusTransitionException("Completed order cannot be cancelled");
     }
 
     // order already canceled
     if (order.getStatus() == OrderStatus.CANCELED) {
-      return toDTO(order);
+      throw new InvalidOrderStatusTransitionException("Order is already canceled");
     }
 
     //

@@ -25,6 +25,15 @@ public class WatchlistDao {
     return em.merge(w);
   }
 
+  public Watchlist findByUserIdAndProductId(Long userId, Long productId) {
+    String hql = "from Watchlist w where w.user.id = :uid and w.product.id = :pid";
+    List<Watchlist> result = em.createQuery(hql, Watchlist.class)
+        .setParameter("uid", userId)
+        .setParameter("pid", productId)
+        .getResultList();
+    return result.isEmpty() ? null : result.get(0);
+  }
+
   public void deleteById(WatchlistKey id) {
     findById(id).ifPresent(em::remove);
   }

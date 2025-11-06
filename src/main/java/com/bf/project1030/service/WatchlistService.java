@@ -5,6 +5,7 @@ import com.bf.project1030.entity.Product;
 import com.bf.project1030.entity.User;
 import com.bf.project1030.entity.Watchlist;
 import com.bf.project1030.entity.WatchlistKey;
+import com.bf.project1030.exception.DuplicateResourceException;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.ProductUserDao;
 import com.bf.project1030.repository.UserDao;
@@ -46,6 +47,8 @@ public class WatchlistService {
           .product(product)
           .build();
       watchlistDao.save(w);
+    }else {
+      throw new DuplicateResourceException("Item is already in wishlist");
     }
   }
 
@@ -53,6 +56,10 @@ public class WatchlistService {
   public void remove(Authentication authentication, Long productId) {
     User user = currentUser(authentication);
     WatchlistKey key = new WatchlistKey(user.getUserId(), productId);
+    Watchlist wl = watchlistDao.findByUserIdAndProductId(user.getUserId(), productId);
+    if (wl == null) {
+      throw new ResourceNotFoundException("Watchlist item not found for productId: " + productId);
+    }
     watchlistDao.deleteById(key);
   }
 
