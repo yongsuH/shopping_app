@@ -28,5 +28,5 @@ public class OrderItem {
   private Integer quantity;
 
   @Column(nullable = false, precision = 12, scale = 2)
-  private BigDecimal priceSnapshot;   // 下单时的零售价快照
+  private BigDecimal priceSnapshot;   // snapshot of price when placing order
 }

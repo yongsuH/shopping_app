@@ -20,7 +20,7 @@ public class StatsDao {
   private EntityManager em;
 
   public StatsOverviewDTO overview() {
-    // 总营收：sum(item.priceSnapshot * item.quantity)
+    // total revenue：sum(item.priceSnapshot * item.quantity)
     String revenueJpql = """
       select coalesce(sum(oi.priceSnapshot * oi.quantity), 0)
       from OrderItem oi
@@ -37,7 +37,7 @@ public class StatsDao {
   }
 
   public List<RevenueDailyPoint> revenueDaily(LocalDate from, LocalDate to) {
-    // 将 Order.createdAt 截为日期分组；from/to 包含端点
+    // seperate by date Order.createdAt, from/to inclusive
     String jpql = """
       select function('date', o.createdAt) as d,
              coalesce(sum(oi.priceSnapshot * oi.quantity), 0)
@@ -60,7 +60,7 @@ public class StatsDao {
   }
 
   public List<TopProductDTO> topProducts(int limit, boolean byRevenue) {
-    // 统计 Product 维度
+    // Product dimentions
     String jpql = byRevenue ? """
       select p.id, p.name,
              coalesce(sum(oi.quantity), 0) as qty,

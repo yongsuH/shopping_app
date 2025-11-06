@@ -57,7 +57,7 @@ public class AuthController {
 
   @GetMapping("/me")
   public ResponseEntity<String> me() {
-    // 能进来说明通过了 JWT 验证
+    // passed JWT auth
     return ResponseEntity.ok("OK");
   }
 }

@@ -4,8 +4,6 @@ import com.bf.project1030.domain.entity.User;
 import com.bf.project1030.exception.DuplicateResourceException;
 import com.bf.project1030.repository.UserDao;
 import jakarta.transaction.Transactional;
-import java.nio.charset.Charset;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -26,7 +26,7 @@ public class AdminSeeder implements CommandLineRunner {
       admin.setPassword(passwordEncoder.encode("admin123"));
       admin.setRole(Role.ADMIN);
       userDao.save(admin);
-      System.out.println("✅ Admin account created: admin / admin123");
+      System.out.println("Admin account created: admin / admin123");
     }
   }
 }

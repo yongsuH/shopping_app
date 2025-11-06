@@ -24,7 +24,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
       throws ServletException, IOException {
     System.out.println("DEBUG: JwtAuthFilter is running for URL: " + req.getRequestURI());
-    // 如果上下文里已经有认证，就不再重复解析
+    // Won't analyze again if authenticated in context
     if (SecurityContextHolder.getContext().getAuthentication() == null) {
       String header = req.getHeader(HttpHeaders.AUTHORIZATION);
       if (header != null && header.startsWith("Bearer ")) {
@@ -42,7 +42,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
           }
         } catch (Exception e) {
-          // token 无效/过期：不设置认证，留给 Security 的 entryPoint 统一返回 401
+          // token invalid/out of date
           SecurityContextHolder.clearContext();
         }
       }

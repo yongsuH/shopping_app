@@ -34,20 +34,20 @@ public class Product {
   @NotNull
   @DecimalMin("0.00")
   @Column(nullable = false, precision = 12, scale = 2)
-  private BigDecimal wholesalePrice; // 管理端可见/可改
+  private BigDecimal wholesalePrice;
 
   @NotNull
   @DecimalMin("0.00")
   @Column(nullable = false, precision = 12, scale = 2)
-  private BigDecimal retailPrice;    // 用户端展示价格
+  private BigDecimal retailPrice;
 
   @Min(0)
   @Column(nullable = false)
-  private Integer quantity;          // 用户端不展示
+  private Integer quantity;
 
   @Builder.Default
   @Column(nullable = false)
-  private Boolean active = true;     // 软下架开关，便于管理员隐藏
+  private Boolean active = true;     //switch
 
   @Column(nullable = false, updatable = false)
   private Instant createdAt;

@@ -21,10 +21,9 @@ public class WatchlistService {
   private final ProductUserDao productUserDao;
   private final WatchlistDao watchlistDao;
 
-  /** 从 Authentication 获取当前用户对象 */
+  // get current user from authentication
   private User currentUser(Authentication authentication) {
-    String username = authentication.getName(); // JWT 解析后的 subject
-    // 假设你有 findByUsername；若用 email，就换成 findByEmail
+    String username = authentication.getName(); // name from JWT
     return userDao.findByUsername(username)
         .orElseThrow(() -> new ResourceNotFoundException("User not found"));
   }
@@ -56,9 +55,9 @@ public class WatchlistService {
 
   public List<ProductUserDTO> list(Authentication authentication) {
     User user = currentUser(authentication);
-    // 仅返回用户端 DTO（不暴露库存/批发价）
+    // return user DTO
     return watchlistDao.findProductsByUserId(user.getUserId()).stream()
-        // 也可选择过滤掉已下架/无库存的项（如下）
+        // filter out of stock and inactive products
         .filter(p -> Boolean.TRUE.equals(p.getActive()) &&
             p.getQuantity() != null && p.getQuantity() > 0)
         .map(p -> new ProductUserDTO(p.getId(), p.getName(), p.getDescription(), p.getRetailPrice()))

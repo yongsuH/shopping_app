@@ -17,11 +17,11 @@ import java.util.UUID;
 @Component
 public class ApiLoggingAspect {
 
-  // 只拦截你项目里的 controller 层（可按需调整）
+  // catch controller layer
   @Pointcut("within(com.bf.project1030.controller..*)")
   public void controllerLayer() {}
 
-  // 标注 NoLog 的类或方法不记录
+  // No log tag
   @Pointcut("@within(com.bf.project1030.aop.NoLog) || @annotation(com.bf.project1030.aop.NoLog)")
   public void noLog() {}
 
@@ -35,7 +35,7 @@ public class ApiLoggingAspect {
 
     String user = currentUserSafe();
 
-    // 处理入参（截断/脱敏）
+    // parsing args
     String argsStr = maskAndLimitArgs(pjp.getArgs(), 2000);
 
     log.info("[{}] → {} user={} args={}", traceId, classMethod, user, argsStr);
@@ -45,7 +45,7 @@ public class ApiLoggingAspect {
     try {
       result = pjp.proceed();
 
-      // 如果是 ResponseEntity，拿出状态码
+      // ResponseEntity --> take status code
       if (result instanceof ResponseEntity<?> resp) {
         statusGuess = resp.getStatusCode().value();
       }
@@ -62,7 +62,7 @@ public class ApiLoggingAspect {
     }
   }
 
-  // 兜底异常日志（即使未走到 Around 的 catch）
+  // final exception log
   @AfterThrowing(pointcut = "controllerLayer() && !noLog()", throwing = "ex")
   public void logException(JoinPoint jp, Throwable ex) {
     MethodSignature ms = (MethodSignature) jp.getSignature();
@@ -79,10 +79,8 @@ public class ApiLoggingAspect {
     }
   }
 
-  // —— 工具：参数脱敏与截断 ——
-
+  // insensitive
   private String maskAndLimitArgs(Object[] args, int maxLen) {
-    // 简单脱敏：Authorization 字段、password/secret 字段名
     String raw = Arrays.toString(args);
     raw = raw.replaceAll("(?i)Authorization=Bearer\\s+[A-Za-z0-9._-]+", "Authorization=Bearer ***");
     raw = raw.replaceAll("(?i)\"password\"\\s*:\\s*\".*?\"", "\"password\":\"***\"");

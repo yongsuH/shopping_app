@@ -16,18 +16,18 @@ public class JwtUtil {
   private final SecretKey key;
   private final long expirationMs = 1000L * 60 * 60; // 1小时
 
-  // 从 application.properties 读取密钥
+  // read key from application.properties
   public JwtUtil(@Value("${app.jwt.secret}") String secret) {
     this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
   }
 
-  /** 生成用户token，可带角色（USER / ADMIN） */
+  // generate user token with roles
   public String generateToken(String username, String role) {
     return Jwts.builder()
         .subject(username)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + expirationMs))
-        .claim("role", role) // 👈 把角色放进 payload
+        .claim("role", role)
         .signWith(key)
         .compact();
   }

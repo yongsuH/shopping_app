@@ -2,7 +2,7 @@ package com.bf.project1030.DTO;
 
 import java.time.Instant;
 
-// 通用统计 DTO：频次接口用 totalQty，最近接口用 lastPurchasedAt
+// DTO for most popular report
 public record ProductStatDTO(
     Long productId,
     String name,

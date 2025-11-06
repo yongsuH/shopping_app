@@ -35,11 +35,11 @@ public class ProductController {
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "20") int size) {
     if (hasRole(authentication, "ROLE_ADMIN")) {
-      // 管理员视图（分页）
+      // view by pages
       List<ProductAdminDTO> data = adminProductService.list(page, size);
       return ResponseEntity.ok(data);
     } else {
-      // 用户视图（你原来是一次性全量，如果也要分页可同步改 service）
+      // user page all at a time
       List<ProductUserDTO> data = productService.getAllForUser();
       return ResponseEntity.ok(data);
     }

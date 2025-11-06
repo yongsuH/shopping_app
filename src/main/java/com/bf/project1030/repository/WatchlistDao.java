@@ -22,7 +22,7 @@ public class WatchlistDao {
   }
 
   public Watchlist save(Watchlist w) {
-    return em.merge(w); // merge 可兼容新老
+    return em.merge(w);
   }
 
   public void deleteById(WatchlistKey id) {

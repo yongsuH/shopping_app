@@ -18,7 +18,7 @@ public class ProductUserDao {
   private EntityManager em;
 
   public List<Product> findAllInStockForUser() {
-    // Criteria 示例
+    // criteria api
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<Product> cq = cb.createQuery(Product.class);
     Root<Product> root = cq.from(Product.class);
@@ -51,12 +51,7 @@ public class ProductUserDao {
     return list.stream().findFirst();
   }
 
-  /* ---------- 用户端已有方法（示例） ----------
-       public List<Product> findAllInStockForUser() { ... }
-       public Optional<Product> findByIdForUser(Long id) { ... }
-       ----------------------------------------- */
-
-  // 管理端：分页列表（按 id desc）
+  // admin: pages list, desc by id
   public List<Product> findAllForAdmin(int page, int size) {
     String jpql = "from Product p order by p.id desc";
     return em.createQuery(jpql, Product.class)
@@ -65,12 +60,12 @@ public class ProductUserDao {
         .getResultList();
   }
 
-  // 管理端：根据 id 查
+  //
   public Optional<Product> findById(Long id) {
     return Optional.ofNullable(em.find(Product.class, id));
   }
 
-  // 保存或更新（无 interface 的风格）
+  // save or update
   public Product save(Product p) {
     if (p.getId() == null) {
       em.persist(p);
@@ -80,7 +75,7 @@ public class ProductUserDao {
     }
   }
 
-  // 管理端：强制查不到就抛 404（方便 Service 复用）
+  // throw exception if not found
   public Product require(Long id) {
     return findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
   }

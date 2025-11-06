@@ -20,7 +20,7 @@ public class AdminProductController {
 
   private final AdminProductService adminProductService;
 
-  // 分页列表
+  // page list
   @GetMapping
   public ResponseEntity<List<ProductAdminDTO>> list(
       @RequestParam(defaultValue = "0") int page,
@@ -28,26 +28,26 @@ public class AdminProductController {
     return ResponseEntity.ok(adminProductService.list(page, size));
   }
 
-  // 详情
+  // detail by id
   @GetMapping("/{id}")
   public ResponseEntity<ProductAdminDTO> get(@PathVariable Long id) {
     return ResponseEntity.ok(adminProductService.get(id));
   }
 
-  // 新增
+  // create new product
   @PostMapping
   public ResponseEntity<ProductAdminDTO> create(@Valid @RequestBody ProductAdminUpsertReq req) {
     return ResponseEntity.ok(adminProductService.create(req));
   }
 
-  // 全量修改
+  // full update
   @PutMapping("/{id}")
   public ResponseEntity<ProductAdminDTO> update(@PathVariable Long id,
       @Valid @RequestBody ProductAdminUpsertReq req) {
     return ResponseEntity.ok(adminProductService.update(id, req));
   }
 
-  // 上/下架
+  // de/active
   @PatchMapping("/{id}/active")
   public ResponseEntity<ProductAdminDTO> toggleActive(@PathVariable Long id,
       @RequestParam boolean value) {

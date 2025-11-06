@@ -21,7 +21,8 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(ex -> ex
-                .authenticationEntryPoint((req, res, e) -> { // 未认证 → 401
+            // unautherized 401
+                .authenticationEntryPoint((req, res, e) -> {
                   res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                   res.setContentType("application/json;charset=UTF-8");
                   res.getWriter().write("{\"error\":\"Unauthorized\",\"message\":\"JWT required\"}");
@@ -35,7 +36,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/signup", "/login").permitAll()
             .requestMatchers("/products/all", "/products/*").permitAll()
-            .requestMatchers("/orders/**").authenticated()   // 订单相关必须登录
+            .requestMatchers("/orders/**").authenticated()
             .requestMatchers("/watchlist/**").authenticated()
             .requestMatchers("/admin/**").hasRole("ADMIN")
 
