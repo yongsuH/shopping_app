@@ -5,6 +5,7 @@ import com.bf.project1030.DTO.ProductAdminDTO;
 import com.bf.project1030.DTO.ProductAdminPatchReq;
 import com.bf.project1030.DTO.ProductAdminUpsertReq;
 import com.bf.project1030.entity.Product;
+import com.bf.project1030.exception.DuplicateResourceException;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.ProductUserDao;
 import jakarta.transaction.Transactional;
@@ -29,8 +30,13 @@ public class AdminProductService {
     return toAdminDTO(productUserDao.require(id));
   }
 
+
   @Transactional
   public ProductAdminDTO create(ProductAdminUpsertReq req) {
+    boolean exists = productUserDao.existsByName(req.name());
+    if (exists) {
+      throw new DuplicateResourceException("Product name already exists: " + req.name());
+    }
     Product p = Product.builder()
         .name(req.name())
         .description(req.description())

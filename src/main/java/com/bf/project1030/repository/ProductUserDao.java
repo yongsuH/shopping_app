@@ -51,6 +51,24 @@ public class ProductUserDao {
     return list.stream().findFirst();
   }
 
+  // find by name
+  public Optional<Product> findByName(String name) {
+    String hql = "from Product p where p.name = :name";
+    List<Product> result = em.createQuery(hql, Product.class)
+        .setParameter("name", name)
+        .getResultList();
+    return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
+  }
+
+  // check existence by name
+  public boolean existsByName(String name) {
+    String hql = "select count(p) from Product p where p.name = :name";
+    Long count = em.createQuery(hql, Long.class)
+        .setParameter("name", name)
+        .getSingleResult();
+    return count > 0;
+  }
+
   // admin: pages list, desc by id
   public List<Product> findAllForAdmin(int page, int size) {
     String jpql = "from Product p order by p.id desc";
