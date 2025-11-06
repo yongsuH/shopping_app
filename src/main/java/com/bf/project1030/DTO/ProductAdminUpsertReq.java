@@ -10,5 +10,9 @@ public record ProductAdminUpsertReq(
     @NotNull @DecimalMin("0.00") BigDecimal wholesalePrice,
     @NotNull @DecimalMin("0.00") BigDecimal retailPrice,
     @NotNull @Min(0) Integer quantity,
-    @NotNull Boolean active
-) {}
+    Boolean active
+) {
+  public ProductAdminUpsertReq {
+    if (active == null) active = true;
+  }
+}

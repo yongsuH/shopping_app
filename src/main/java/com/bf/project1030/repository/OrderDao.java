@@ -27,6 +27,14 @@ public class OrderDao {
     return Optional.ofNullable(em.find(Order.class, id));
   }
 
+  public List<Order> findAllPaged(int page, int size) {
+    String hql = "from Order o order by o.createdAt desc";
+    return em.createQuery(hql, Order.class)
+        .setFirstResult(page * size) // start from
+        .setMaxResults(size)         // how many
+        .getResultList();
+  }
+
   public Order findByIdForUpdate(Long id) {
     return em.find(Order.class, id, LockModeType.PESSIMISTIC_WRITE);
   }

@@ -1,5 +1,6 @@
 package com.bf.project1030.repository;
 
+import com.bf.project1030.DTO.ProductProfitDTO;
 import com.bf.project1030.DTO.ProductStatDTO;
 import com.bf.project1030.domain.entity.OrderStatus;
 import jakarta.persistence.EntityManager;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class UserStatDao {
+public class ReportDao {
 
   @PersistenceContext
   private EntityManager em;
@@ -63,4 +64,49 @@ public class UserStatDao {
         .setMaxResults(topN)
         .getResultList();
   }
+
+  // admin：by sales（completed sale quantity）top n
+  public List<ProductStatDTO> topPopularProducts(int topN) {
+    String jpql = """
+      select new com.bf.project1030.DTO.ProductStatDTO(
+        p.id,
+        p.name,
+        sum(oi.quantity),
+        null
+      )
+      from OrderItem oi
+        join oi.order o
+        join oi.product p
+      where o.status = :completed
+      group by p.id, p.name
+      order by sum(oi.quantity) desc, p.id asc
+      """;
+    return em.createQuery(jpql, ProductStatDTO.class)
+        .setParameter("completed", com.bf.project1030.domain.entity.OrderStatus.COMPLETED)
+        .setMaxResults(topN)
+        .getResultList();
+  }
+
+  // admin：by total profit（sales × (retail - wholesale)）top n
+  public List<ProductProfitDTO> topProfitableProducts(int topN) {
+    String jpql = """
+      select new com.bf.project1030.DTO.ProductProfitDTO(
+        p.id,
+        p.name,
+        sum( (p.retailPrice - p.wholesalePrice) * oi.quantity )
+      )
+      from OrderItem oi
+        join oi.order o
+        join oi.product p
+      where o.status = :completed
+      group by p.id, p.name
+      order by sum( (p.retailPrice - p.wholesalePrice) * oi.quantity ) desc, p.id asc
+      """;
+
+    return em.createQuery(jpql, ProductProfitDTO.class)
+        .setParameter("completed", com.bf.project1030.domain.entity.OrderStatus.COMPLETED)
+        .setMaxResults(topN)
+        .getResultList();
+  }
+
 }

@@ -85,6 +85,12 @@ public class OrderService {
     return toDTO(order);
   }
 
+  public List<OrderDTO> getAllOrdersPaged(int page, int size) {
+    return orderDao.findAllPaged(page, size).stream()
+        .map(OrderService::toDTO)
+        .toList();
+  }
+
   private static OrderDTO toDTO(Order order) {
     return new OrderDTO(
         order.getId(),
@@ -117,9 +123,9 @@ public class OrderService {
     if (order.getStatus() == OrderStatus.COMPLETED) {
       return toDTO(order);
     }
-    if (order.getStatus() != OrderStatus.PROCESSING) {
-      throw new InvalidOrderStatusTransitionException("Only PROCESSING order can be completed");
-    }
+    //if (order.getStatus() != OrderStatus.PROCESSING) {
+    //  throw new InvalidOrderStatusTransitionException("Only PROCESSING order can be completed");
+    //}
 
     order.setStatus(OrderStatus.COMPLETED);
     return toDTO(order);
@@ -133,15 +139,19 @@ public class OrderService {
       throw new ResourceNotFoundException("Order not found");
     }
 
+    if (order.getStatus() == OrderStatus.COMPLETED) {
+      throw new InvalidOrderStatusTransitionException("Completed order cannot be completed");
+    }
+
     // order already canceled
     if (order.getStatus() == OrderStatus.CANCELED) {
       return toDTO(order);
     }
 
     //
-    if (order.getStatus() != OrderStatus.PROCESSING && order.getStatus() != OrderStatus.COMPLETED) {
+    if (order.getStatus() != OrderStatus.PROCESSING) {
       throw new InvalidOrderStatusTransitionException(
-          "Only PROCESSING or COMPLETED orders can be canceled");
+          "Only PROCESSING orders can be canceled");
     }
 
     // add back stock

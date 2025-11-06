@@ -1,12 +1,14 @@
 package com.bf.project1030.controller;
 
 import com.bf.project1030.DTO.ProductAdminDTO;
+import com.bf.project1030.DTO.ProductAdminPatchReq;
 import com.bf.project1030.DTO.ProductAdminUpsertReq;
+import com.bf.project1030.DTO.ProductProfitDTO;
 import com.bf.project1030.DTO.ProductStatDTO;
 import com.bf.project1030.DTO.ProductUserDTO;
 import com.bf.project1030.service.AdminProductService;
 import com.bf.project1030.service.ProductService;
-import com.bf.project1030.service.UserStatService;
+import com.bf.project1030.service.ReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +26,9 @@ public class ProductController {
 
   private final ProductService productService;
   private final AdminProductService adminProductService;
-  private final UserStatService reportService;
+  private final ReportService reportService;
 
-  // ===== 同一路径：GET /products/all —— token区分返回 =====
+  // One url：GET /products/all  differ by token
   @GetMapping("/all")
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   public ResponseEntity<?> all(Authentication authentication,
@@ -43,7 +45,7 @@ public class ProductController {
     }
   }
 
-  // ===== 同一路径：GET /products/{id} —— token区分返回 =====
+  // One url：GET /products/{id} differ by token
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   public ResponseEntity<?> getOne(Authentication authentication, @PathVariable Long id) {
@@ -56,14 +58,14 @@ public class ProductController {
     }
   }
 
-  // ===== 同一路径（仅管理员可用）：POST /products —— 新增 =====
+  // admin: POST /products   create new
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ProductAdminDTO> create(@Valid @RequestBody ProductAdminUpsertReq req) {
     return ResponseEntity.ok(adminProductService.create(req));
   }
 
-  // ===== 同一路径（仅管理员可用）：PUT /products/{id} —— 全量修改 =====
+  // admin：PUT /products/{id}  full update
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ProductAdminDTO> update(@PathVariable Long id,
@@ -71,7 +73,7 @@ public class ProductController {
     return ResponseEntity.ok(adminProductService.update(id, req));
   }
 
-  // ===== 同一路径（仅管理员可用）：PATCH /products/{id}/active —— 上/下架 =====
+  // admin：PATCH /products/{id}/active  de/activate
   @PatchMapping("/{id}/active")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ProductAdminDTO> toggleActive(@PathVariable Long id,
@@ -79,7 +81,15 @@ public class ProductController {
     return ResponseEntity.ok(adminProductService.toggleActive(id, value));
   }
 
-  // ===== 工具方法：判断是否具有某角色 =====
+  // admin: partial update
+  @PatchMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<ProductAdminDTO> patchProduct(@PathVariable Long id,
+      @RequestBody ProductAdminPatchReq req) {
+    return ResponseEntity.ok(adminProductService.patch(id, req));
+  }
+
+  // util: check if a user has a specific role
   public static boolean hasRole(Authentication auth, String role) {
     if (auth == null) return false;
     Collection<?> authorities = auth.getAuthorities();
@@ -105,4 +115,19 @@ public class ProductController {
     String username = authentication.getName();
     return ResponseEntity.ok(reportService.topRecent(username, n));
   }
+
+  // admin: most popular, by sale quantity
+  @GetMapping("/popular/{n}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<List<ProductStatDTO>> topPopular(@PathVariable int n) {
+    return ResponseEntity.ok(reportService.topPopular(n));
+  }
+
+  // admin：most profitable, by profit
+  @GetMapping("/profit/{n}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<List<ProductProfitDTO>> topProfit(@PathVariable int n) {
+    return ResponseEntity.ok(reportService.topProfit(n));
+  }
+
 }

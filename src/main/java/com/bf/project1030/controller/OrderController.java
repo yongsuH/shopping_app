@@ -42,15 +42,22 @@ public class OrderController {
     return ResponseEntity.ok(orderService.placeOrder(userId, req.order()));
   }
 
-  // find their own order
+  // find orders (USER: own orders; ADMIN: all orders paged, 5 per page)
   @GetMapping("/all")
-  public ResponseEntity<List<OrderDTO>> myOrders(Authentication authentication) {
-    String username = authentication.getName();
-    Long userId = userDao.findByUsername(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"))
-        .getUserId();
-
-    return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  public ResponseEntity<List<OrderDTO>> myOrders(Authentication authentication,
+      @RequestParam(defaultValue = "0") int page) {
+    if (hasRole(authentication, "ROLE_ADMIN")) {
+      // admin sees all orders，5 per page
+      return ResponseEntity.ok(orderService.getAllOrdersPaged(page, 5));
+    } else {
+      // user: sees their own order
+      String username = authentication.getName();
+      Long userId = userDao.findByUsername(username)
+          .orElseThrow(() -> new ResourceNotFoundException("User not found"))
+          .getUserId();
+      return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    }
   }
 
   // find order by id
@@ -81,5 +88,12 @@ public class OrderController {
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   public ResponseEntity<OrderDTO> cancel(@PathVariable Long id) {
     return ResponseEntity.ok(orderService.cancel(id));
+  }
+
+  // util method
+  private boolean hasRole(Authentication auth, String role) {
+    if (auth == null || auth.getAuthorities() == null) return false;
+    return auth.getAuthorities().stream()
+        .anyMatch(a -> role.equals(a.getAuthority()));
   }
 }
