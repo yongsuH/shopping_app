@@ -3,11 +3,13 @@ package com.bf.project1030.service;
 
 import com.bf.project1030.DTO.OrderDTO;
 import com.bf.project1030.DTO.OrderItemDTO;
+import com.bf.project1030.exception.NotEnoughInventoryException;
 import com.bf.project1030.repository.*;
 import com.bf.project1030.domain.entity.*;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,10 +37,10 @@ public class OrderService {
           .orElseThrow(() -> new ResourceNotFoundException("Product not found or out of stock"));
 
       if (p.getQuantity() < req.quantity()) {
-        throw new IllegalArgumentException("Not enough stock for " + p.getName());
+        throw new NotEnoughInventoryException("Not enough stock for " + p.getName());
       }
 
-      // 减库存
+      // deduct stock
       p.setQuantity(p.getQuantity() - req.quantity());
 
       OrderItem item = new OrderItem();
@@ -62,8 +64,25 @@ public class OrderService {
         .toList();
   }
 
-  // 下单请求结构体
-  public record OrderItemRequest(Long productId, Integer quantity) {}
+  // 管理员查任意订单
+  public OrderDTO getOrderByIdForAdmin(Long id) {
+    Order order = orderDao.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    return toDTO(order);
+  }
+
+  // 用户只能查自己的订单
+  public OrderDTO getOrderByIdForUser(String username, Long id) {
+    Order order = orderDao.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+    // 如果订单不属于当前用户，就拒绝
+    if (!order.getUser().getUsername().equals(username)) {
+      throw new AccessDeniedException("You do not have permission to access this order");
+    }
+
+    return toDTO(order);
+  }
 
   private static OrderDTO toDTO(Order order) {
     return new OrderDTO(
@@ -81,5 +100,8 @@ public class OrderService {
             .toList()
     );
   }
+
+  // OrderItemRequest
+  public record OrderItemRequest(Long productId, Integer quantity) {}
 
 }

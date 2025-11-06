@@ -77,7 +77,7 @@ public class ProductController {
   }
 
   // ===== 工具方法：判断是否具有某角色 =====
-  private boolean hasRole(Authentication auth, String role) {
+  public static boolean hasRole(Authentication auth, String role) {
     if (auth == null) return false;
     Collection<?> authorities = auth.getAuthorities();
     if (authorities == null) return false;

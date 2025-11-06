@@ -2,8 +2,8 @@ package com.bf.project1030.repository;
 
 import com.bf.project1030.domain.entity.Order;
 import jakarta.persistence.*;
+import java.util.Optional;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,5 +21,9 @@ public class OrderDao {
     return em.createQuery(hql, Order.class)
         .setParameter("uid", userId)
         .getResultList();
+  }
+
+  public Optional<Order> findById(Long id) {
+    return Optional.ofNullable(em.find(Order.class, id));
   }
 }
