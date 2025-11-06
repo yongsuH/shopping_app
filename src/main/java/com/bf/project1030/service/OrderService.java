@@ -85,7 +85,7 @@ public class OrderService {
 
     // Reject if not the user
     if (!order.getUser().getUsername().equals(username)) {
-      throw new AccessDeniedException("You do not have permission to access this order");
+      throw new UnauthorizedOrderAccessException("You do not have permission to access this order");
     }
 
     return toDTO(order);
