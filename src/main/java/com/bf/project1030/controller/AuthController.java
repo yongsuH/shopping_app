@@ -2,6 +2,7 @@ package com.bf.project1030.controller;
 
 import com.bf.project1030.DTO.LoginRequest;
 import com.bf.project1030.domain.entity.User;
+import com.bf.project1030.exception.InvalidCredentialsException;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import com.bf.project1030.repository.UserDao;
 import com.bf.project1030.security.JwtUtil;
@@ -44,10 +45,12 @@ public class AuthController {
       var user = userDao.findByUsername(req.username())
           .orElseThrow(() -> new ResourceNotFoundException("User not found"));
       String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name()); // ADMIN / USER
-      return ResponseEntity.ok(Map.of("token", token));
+      return ResponseEntity.ok(Map.of(
+          "token", token,
+          "role", user.getRole().name()
+      ));
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-        .body(Map.of("error", "Incorrect credentials, please try again."));
+    throw new InvalidCredentialsException();
   }
 
   public record LoginReq(String username, String password) {}
