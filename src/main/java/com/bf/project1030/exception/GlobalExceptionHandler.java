@@ -1,5 +1,6 @@
 package com.bf.project1030.exception;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,13 @@ public class GlobalExceptionHandler {
   public org.springframework.http.ResponseEntity<java.util.Map<String, String>> handleInvalidOrderStatus(InvalidOrderStatusTransitionException ex) {
     return org.springframework.http.ResponseEntity
         .status(org.springframework.http.HttpStatus.BAD_REQUEST)
+        .body(java.util.Map.of("message", ex.getMessage()));
+  }
+
+  @org.springframework.web.bind.annotation.ExceptionHandler(UnauthorizedOrderAccessException.class)
+  public org.springframework.http.ResponseEntity<java.util.Map<String, String>> handleAccessDenied(UnauthorizedOrderAccessException ex) {
+    return org.springframework.http.ResponseEntity
+        .status(org.springframework.http.HttpStatus.FORBIDDEN)
         .body(java.util.Map.of("message", ex.getMessage()));
   }
 }

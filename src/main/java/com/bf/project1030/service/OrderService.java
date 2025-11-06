@@ -10,11 +10,13 @@ import com.bf.project1030.entity.Product;
 import com.bf.project1030.entity.User;
 import com.bf.project1030.exception.NotEnoughInventoryException;
 import com.bf.project1030.exception.InvalidOrderStatusTransitionException;
+import com.bf.project1030.exception.UnauthorizedOrderAccessException;
 import com.bf.project1030.repository.*;
 import com.bf.project1030.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -115,11 +117,23 @@ public class OrderService {
 
   // Completing a order：PROCESSING -> COMPLETED
   @Transactional
-  public OrderDTO complete(Long id) {
+  public OrderDTO complete(Authentication authentication, Long id) {
     var order = orderDao.findByIdForUpdate(id);
     if (order == null) {
       throw new ResourceNotFoundException("Order not found");
     }
+
+    // get current user info
+    String currentUsername = authentication.getName();
+    boolean isAdmin = authentication.getAuthorities().stream()
+        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+    // check order Owner when not admin
+    String orderOwner = order.getUser().getUsername();
+    if (!isAdmin && !orderOwner.equals(currentUsername)) {
+      throw new UnauthorizedOrderAccessException("You do not have access to someone else's order");
+    }
+
     if (order.getStatus() == OrderStatus.CANCELED) {
       throw new InvalidOrderStatusTransitionException("Canceled order cannot be completed");
     }
@@ -137,10 +151,22 @@ public class OrderService {
 
   // Cancel order：PROCESSING -> CANCELED，add back stock
   @Transactional
-  public OrderDTO cancel(Long id) {
+  public OrderDTO cancel(Authentication authentication, Long id)
+  {
     var order = orderDao.findByIdForUpdate(id);
     if (order == null) {
       throw new ResourceNotFoundException("Order not found");
+    }
+
+    // get current user info
+    String currentUsername = authentication.getName();
+    boolean isAdmin = authentication.getAuthorities().stream()
+        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+    // check order Owner when not admin
+    String orderOwner = order.getUser().getUsername();
+    if (!isAdmin && !orderOwner.equals(currentUsername)) {
+      throw new UnauthorizedOrderAccessException("You do not have access to someone else's order");
     }
 
     if (order.getStatus() == OrderStatus.COMPLETED) {
