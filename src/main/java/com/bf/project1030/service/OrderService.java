@@ -4,6 +4,7 @@ package com.bf.project1030.service;
 import com.bf.project1030.DTO.OrderDTO;
 import com.bf.project1030.DTO.OrderItemDTO;
 import com.bf.project1030.exception.NotEnoughInventoryException;
+import com.bf.project1030.exception.InvalidOrderStatusTransitionException;
 import com.bf.project1030.repository.*;
 import com.bf.project1030.domain.entity.*;
 import com.bf.project1030.exception.ResourceNotFoundException;
@@ -91,6 +92,7 @@ public class OrderService {
         order.getCreatedAt(),
         order.getUser().getUserId(),
         order.getUser().getUsername(),
+        order.getStatus(),
         order.getItems().stream()
             .map(item -> new OrderItemDTO(
                 item.getProduct().getId(),
@@ -99,6 +101,57 @@ public class OrderService {
                 item.getPriceSnapshot()))
             .toList()
     );
+  }
+
+  // Completing a order：PROCESSING -> COMPLETED
+  @Transactional
+  public OrderDTO complete(Long id) {
+    var order = orderDao.findByIdForUpdate(id);
+    if (order == null) {
+      throw new ResourceNotFoundException("Order not found");
+    }
+    if (order.getStatus() == OrderStatus.CANCELED) {
+      throw new InvalidOrderStatusTransitionException("Canceled order cannot be completed");
+    }
+    // already completed
+    if (order.getStatus() == OrderStatus.COMPLETED) {
+      return toDTO(order);
+    }
+    if (order.getStatus() != OrderStatus.PROCESSING) {
+      throw new InvalidOrderStatusTransitionException("Only PROCESSING order can be completed");
+    }
+
+    order.setStatus(OrderStatus.COMPLETED);
+    return toDTO(order);
+  }
+
+  // Cancel order：PROCESSING -> CANCELED，add back stock
+  @Transactional
+  public OrderDTO cancel(Long id) {
+    var order = orderDao.findByIdForUpdate(id);
+    if (order == null) {
+      throw new ResourceNotFoundException("Order not found");
+    }
+
+    // order already canceled
+    if (order.getStatus() == OrderStatus.CANCELED) {
+      return toDTO(order);
+    }
+
+    //
+    if (order.getStatus() != OrderStatus.PROCESSING && order.getStatus() != OrderStatus.COMPLETED) {
+      throw new InvalidOrderStatusTransitionException(
+          "Only PROCESSING or COMPLETED orders can be canceled");
+    }
+
+    // add back stock
+    for (OrderItem item : order.getItems()) {
+      var product = item.getProduct();
+      product.setQuantity(product.getQuantity() + item.getQuantity());
+    }
+
+    order.setStatus(OrderStatus.CANCELED);
+    return toDTO(order);
   }
 
   // OrderItemRequest

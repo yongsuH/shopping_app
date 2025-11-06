@@ -42,4 +42,10 @@ public class GlobalExceptionHandler {
         .body(java.util.Map.of("message", ex.getMessage()));
   }
 
+  @org.springframework.web.bind.annotation.ExceptionHandler(InvalidOrderStatusTransitionException.class)
+  public org.springframework.http.ResponseEntity<java.util.Map<String, String>> handleInvalidOrderStatus(InvalidOrderStatusTransitionException ex) {
+    return org.springframework.http.ResponseEntity
+        .status(org.springframework.http.HttpStatus.BAD_REQUEST)
+        .body(java.util.Map.of("message", ex.getMessage()));
+  }
 }

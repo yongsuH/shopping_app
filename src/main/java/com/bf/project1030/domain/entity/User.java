@@ -37,6 +37,6 @@ public class User {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Role role = Role.USER;  // 注册默认 USER
+  private Role role = Role.USER;  // USER by default
 
 }

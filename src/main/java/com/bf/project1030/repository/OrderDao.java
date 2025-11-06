@@ -26,4 +26,8 @@ public class OrderDao {
   public Optional<Order> findById(Long id) {
     return Optional.ofNullable(em.find(Order.class, id));
   }
+
+  public Order findByIdForUpdate(Long id) {
+    return em.find(Order.class, id, LockModeType.PESSIMISTIC_WRITE);
+  }
 }

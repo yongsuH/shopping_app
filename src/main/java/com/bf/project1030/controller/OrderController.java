@@ -68,4 +68,18 @@ public class OrderController {
       return ResponseEntity.ok(dto);
     }
   }
+
+  // PATCH /orders/{id}/complete
+  @PatchMapping("/{id}/complete")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  public ResponseEntity<OrderDTO> complete(@PathVariable Long id) {
+    return ResponseEntity.ok(orderService.complete(id));
+  }
+
+  // PATCH /orders/{id}/cancel
+  @PatchMapping("/{id}/cancel")
+  @PreAuthorize("hasAnyRole('USER','ADMIN')")
+  public ResponseEntity<OrderDTO> cancel(@PathVariable Long id) {
+    return ResponseEntity.ok(orderService.cancel(id));
+  }
 }

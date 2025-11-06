@@ -33,6 +33,10 @@ public class Order {
   @Column(nullable = false)
   private Instant createdAt;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private OrderStatus status = OrderStatus.PROCESSING;
+
   @PrePersist
   public void prePersist() {
     this.createdAt = Instant.now();
