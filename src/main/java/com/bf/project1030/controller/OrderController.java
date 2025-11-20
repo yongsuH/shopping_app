@@ -41,10 +41,11 @@ public class OrderController {
   @GetMapping("/all")
   @PreAuthorize("hasAnyRole('USER','ADMIN')")
   public ResponseEntity<List<OrderDTO>> myOrders(Authentication authentication,
-      @RequestParam(defaultValue = "0") int page) {
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size) {
     if (hasRole(authentication, "ROLE_ADMIN")) {
-      // admin sees all orders，5 per page
-      return ResponseEntity.ok(orderService.getAllOrdersPaged(page, 5));
+      // admin sees all orders，default 5 per page
+      return ResponseEntity.ok(orderService.getAllOrdersPaged(page, size));
     } else {
       // user: sees their own order
       String username = authentication.getName();

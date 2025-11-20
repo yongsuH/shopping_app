@@ -1,4 +1,3 @@
-// src/main/java/com/bf/project1030/repository/StatsDao.java
 package com.bf.project1030.repository;
 
 import com.bf.project1030.DTO.RevenueDailyPoint;
@@ -20,21 +19,35 @@ public class StatsDao {
   private EntityManager em;
 
   public StatsOverviewDTO overview() {
-    // total revenue：sum(item.priceSnapshot * item.quantity)
+    // total revenue：sum(item.priceSnapshot * item.quantity)，排除掉 canceled 的订单
     String revenueJpql = """
       select coalesce(sum(oi.priceSnapshot * oi.quantity), 0)
       from OrderItem oi
+      join oi.order o
+      where o.status <> com.bf.project1030.entity.OrderStatus.CANCELED
       """;
     BigDecimal totalRevenue = em.createQuery(revenueJpql, BigDecimal.class).getSingleResult();
 
-    String countOrders = "select count(o) from Order o";
+    // 订单数量，排除 canceled
+    String countOrders = """
+      select count(o)
+      from Order o
+      where o.status <> com.bf.project1030.entity.OrderStatus.CANCELED
+      """;
     Long ordersCount = em.createQuery(countOrders, Long.class).getSingleResult();
 
-    String itemsSoldJpql = "select coalesce(sum(oi.quantity), 0) from OrderItem oi";
+    // 已售商品数量，排除 canceled
+    String itemsSoldJpql = """
+      select coalesce(sum(oi.quantity), 0)
+      from OrderItem oi
+      join oi.order o
+      where o.status <> com.bf.project1030.entity.OrderStatus.CANCELED
+      """;
     Long itemsSold = em.createQuery(itemsSoldJpql, Long.class).getSingleResult();
 
     return new StatsOverviewDTO(ordersCount, itemsSold, totalRevenue);
   }
+
 
   public List<RevenueDailyPoint> revenueDaily(LocalDate from, LocalDate to) {
     // seperate by date Order.createdAt, from/to inclusive

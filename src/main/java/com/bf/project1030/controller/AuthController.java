@@ -44,7 +44,8 @@ public class AuthController {
       String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name()); // ADMIN / USER
       return ResponseEntity.ok(Map.of(
           "token", token,
-          "role", user.getRole().name()
+          "role", user.getRole().name(),
+          "username", user.getUsername()
       ));
     }
     throw new InvalidCredentialsException();

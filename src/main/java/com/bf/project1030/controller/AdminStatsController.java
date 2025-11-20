@@ -20,13 +20,13 @@ public class AdminStatsController {
 
   private final AdminStatsService service;
 
-  // 概览
+  // Overview
   @GetMapping("/overview")
   public ResponseEntity<StatsOverviewDTO> overview() {
     return ResponseEntity.ok(service.overview());
   }
 
-  // 日营收（闭区间）
+  // daily revenue
   @GetMapping("/revenue/daily")
   public ResponseEntity<List<RevenueDailyPoint>> revenueDaily(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -35,7 +35,7 @@ public class AdminStatsController {
     return ResponseEntity.ok(service.revenueDaily(from, to));
   }
 
-  // 热销商品 Top N
+  // Top N
   @GetMapping("/top-products")
   public ResponseEntity<List<TopProductDTO>> topProducts(
       @RequestParam(defaultValue = "10") int limit,
